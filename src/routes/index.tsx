@@ -44,21 +44,15 @@ function Index() {
       <SiteNav />
 
       {/* Hero */}
-      <section className="relative overflow-hidden">
-        <div
-          className="pointer-events-none absolute inset-0 -z-10"
-          style={{ background: "var(--gradient-soft)" }}
-        />
-        <div className="pointer-events-none absolute -right-24 -top-24 -z-10 h-96 w-96 rounded-full opacity-40 blur-3xl" style={{ background: "var(--gradient-brand)" }} />
+      <section className="relative overflow-hidden bg-background">
         <div className="mx-auto grid max-w-6xl gap-12 px-4 py-20 sm:px-6 lg:grid-cols-2 lg:py-28">
           <div className="flex flex-col justify-center">
             <motion.span
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              className="inline-flex w-fit items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-medium text-[color:var(--primary-deep)]"
+              className="inline-flex w-fit items-center gap-2 rounded-md border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-medium text-[color:var(--primary-deep)]"
             >
-              <Sparkles className="h-3.5 w-3.5" /> Kumasi · around KNUST
             </motion.span>
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
@@ -85,14 +79,14 @@ function Index() {
             >
               <Link
                 to="/book"
-                className="group inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground shadow-[var(--shadow-soft)] transition-transform hover:-translate-y-0.5"
+                className="group inline-flex items-center gap-2 rounded-md bg-primary px-6 py-3 text-sm font-medium text-primary-foreground shadow-sm transition-transform hover:-translate-y-0.5"
               >
                 Book a cleaning
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
               </Link>
               <a
                 href="tel:+233530268611"
-                className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-6 py-3 text-sm font-medium text-foreground transition-colors hover:bg-[color:var(--muted)]"
+                className="inline-flex items-center gap-2 rounded-md border border-border bg-background px-6 py-3 text-sm font-medium text-foreground transition-colors hover:bg-[color:var(--muted)]"
               >
                 <Phone className="h-4 w-4" /> 0530 268 611
               </a>
@@ -113,26 +107,9 @@ function Index() {
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
             className="relative"
           >
-            <div className="absolute -inset-6 -z-10 rounded-[2rem] opacity-30 blur-2xl" style={{ background: "var(--gradient-brand)" }} />
-            <div className="overflow-hidden rounded-[2rem] border border-border bg-card shadow-[var(--shadow-card)]">
+            <div className="overflow-hidden rounded-md border border-border bg-card shadow-[var(--shadow-card)]">
               <img src={hero.url} alt="Professional Ino cleaner ready to serve" className="h-full w-full object-cover" />
             </div>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6, duration: 0.6 }}
-              className="absolute -bottom-6 -left-6 hidden rounded-2xl border border-border bg-background/95 p-4 shadow-[var(--shadow-card)] backdrop-blur sm:block"
-            >
-              <div className="flex items-center gap-3">
-                <div className="grid h-10 w-10 place-items-center rounded-full bg-primary/15 text-[color:var(--primary-deep)]">
-                  <Sparkles className="h-5 w-5" />
-                </div>
-                <div>
-                  <div className="text-sm font-semibold">500+ homes</div>
-                  <div className="text-xs text-muted-foreground">cleaned this year</div>
-                </div>
-              </div>
-            </motion.div>
           </motion.div>
         </div>
       </section>
@@ -152,8 +129,8 @@ function Index() {
         <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {services.map((s, i) => (
             <Reveal key={s.name} delay={i * 0.05}>
-              <div className="group h-full rounded-2xl border border-border bg-card p-6 transition-all hover:-translate-y-1 hover:border-primary/40 hover:shadow-[var(--shadow-card)]">
-                <div className="grid h-11 w-11 place-items-center rounded-xl bg-primary/10 text-[color:var(--primary-deep)] transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+              <div className="group h-full rounded-md border border-border bg-card p-6 transition-all hover:border-primary/40 hover:shadow-[var(--shadow-card)]">
+                <div className="grid h-11 w-11 place-items-center rounded-md bg-primary/10 text-[color:var(--primary-deep)] transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
                   <s.icon className="h-5 w-5" />
                 </div>
                 <h3 className="mt-5 text-lg font-semibold">{s.name}</h3>
@@ -170,7 +147,7 @@ function Index() {
           {perks.map((p, i) => (
             <Reveal key={p.title} delay={i * 0.08}>
               <div className="flex gap-4">
-                <div className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-background text-[color:var(--primary-deep)] shadow-sm">
+                <div className="grid h-12 w-12 shrink-0 place-items-center rounded-md bg-background text-[color:var(--primary-deep)] shadow-sm border border-border">
                   <p.icon className="h-6 w-6" />
                 </div>
                 <div>
@@ -196,8 +173,8 @@ function Index() {
             { n: "03", t: "We arrive & sparkle", d: "Our crew shows up on time, ready to work." },
           ].map((s, i) => (
             <Reveal key={s.n} delay={i * 0.08}>
-              <div className="rounded-2xl border border-border bg-card p-6">
-                <div className="text-sm font-mono text-[color:var(--primary)]">{s.n}</div>
+              <div className="rounded-md border border-border bg-card p-6">
+                <div className="text-sm font-mono text-[color:var(--primary-deep)] font-bold">{s.n}</div>
                 <h3 className="mt-2 text-lg font-semibold">{s.t}</h3>
                 <p className="mt-2 text-sm text-muted-foreground">{s.d}</p>
               </div>
@@ -209,13 +186,12 @@ function Index() {
       {/* CTA */}
       <section className="mx-auto max-w-6xl px-4 pb-20 sm:px-6">
         <Reveal>
-          <div className="relative overflow-hidden rounded-3xl px-8 py-16 text-center" style={{ background: "var(--gradient-brand)" }}>
-            <div className="pointer-events-none absolute inset-0 opacity-30" style={{ backgroundImage: "radial-gradient(circle at 20% 20%, white 0%, transparent 40%), radial-gradient(circle at 80% 80%, white 0%, transparent 35%)" }} />
+          <div className="relative overflow-hidden rounded-md bg-primary px-8 py-16 text-center">
             <h2 className="relative text-3xl font-semibold tracking-tight text-white sm:text-4xl">Ready for a fresh, spotless space?</h2>
             <p className="relative mx-auto mt-3 max-w-xl text-white/90">Build your booking in a couple of minutes and see the price as you go.</p>
             <Link
               to="/book"
-              className="relative mt-8 inline-flex items-center gap-2 rounded-full bg-background px-6 py-3 text-sm font-medium text-foreground shadow-lg transition-transform hover:-translate-y-0.5"
+              className="relative mt-8 inline-flex items-center gap-2 rounded-md bg-background px-6 py-3 text-sm font-medium text-foreground shadow-sm transition-transform hover:-translate-y-0.5"
             >
               Start booking <ArrowRight className="h-4 w-4" />
             </Link>

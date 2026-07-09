@@ -133,14 +133,14 @@ function BookPage() {
             exit={{ opacity: 0 }}
             className="mx-auto max-w-2xl px-4 py-24 text-center sm:px-6"
           >
-            <div className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-primary/15 text-[color:var(--primary-deep)]">
+            <div className="mx-auto grid h-16 w-16 place-items-center rounded-md bg-primary/15 text-[color:var(--primary-deep)]">
               <Check className="h-8 w-8" />
             </div>
             <h2 className="mt-6 text-3xl font-semibold tracking-tight">Booking request received</h2>
             <p className="mt-3 text-muted-foreground">
               Thanks {contact.name.split(" ")[0]}! We'll call {contact.phone} shortly to confirm your booking and share the final quote.
             </p>
-            <div className="mt-6 inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm">
+            <div className="mt-6 inline-flex items-center gap-2 rounded-md border border-border bg-card px-4 py-2 text-sm">
               Estimated total: <span className="font-semibold text-[color:var(--primary-deep)]">{fmt(total)}</span>
             </div>
           </motion.section>
@@ -162,13 +162,13 @@ function BookPage() {
                         key={j.id}
                         type="button"
                         onClick={() => setJob(j.id)}
-                        className={`group flex items-center gap-3 rounded-2xl border p-4 text-left transition-all ${
+                        className={`group flex items-center gap-3 rounded-md border p-4 text-left transition-all ${
                           active
                             ? "border-primary bg-primary/5 shadow-[var(--shadow-soft)]"
                             : "border-border bg-card hover:border-primary/40"
                         }`}
                       >
-                        <span className={`grid h-10 w-10 shrink-0 place-items-center rounded-xl ${active ? "bg-primary text-primary-foreground" : "bg-primary/10 text-[color:var(--primary-deep)]"}`}>
+                        <span className={`grid h-10 w-10 shrink-0 place-items-center rounded-md ${active ? "bg-primary text-primary-foreground" : "bg-primary/10 text-[color:var(--primary-deep)]"}`}>
                           <j.icon className="h-5 w-5" />
                         </span>
                         <span className="text-sm font-medium">{j.label}</span>
@@ -179,7 +179,7 @@ function BookPage() {
               </Step>
 
               <Step number="2" title="Rooms">
-                <div className="divide-y divide-border rounded-2xl border border-border bg-card">
+                <div className="divide-y divide-border rounded-md border border-border bg-card">
                   {ROOMS.map((r) => (
                     <Counter
                       key={r.id}
@@ -229,7 +229,7 @@ function BookPage() {
                         key={c.id}
                         type="button"
                         onClick={() => setConds((p) => ({ ...p, [c.id]: !p[c.id] }))}
-                        className={`flex items-center justify-between rounded-2xl border p-4 text-left transition-all ${
+                        className={`flex items-center justify-between rounded-md border p-4 text-left transition-all ${
                           active ? "border-primary bg-primary/5" : "border-border bg-card hover:border-primary/40"
                         }`}
                       >
@@ -237,7 +237,7 @@ function BookPage() {
                           <div className="text-sm font-medium">{c.label}</div>
                           <div className="text-xs text-muted-foreground">+{fmt(c.price)}</div>
                         </div>
-                        <span className={`grid h-6 w-6 place-items-center rounded-full border ${active ? "border-primary bg-primary text-primary-foreground" : "border-border"}`}>
+                        <span className={`grid h-6 w-6 place-items-center rounded-md border ${active ? "border-primary bg-primary text-primary-foreground" : "border-border"}`}>
                           {active && <Check className="h-3.5 w-3.5" />}
                         </span>
                       </button>
@@ -247,7 +247,7 @@ function BookPage() {
               </Step>
 
               <Step number="6" title="Windows">
-                <div className="rounded-2xl border border-border bg-card">
+                <div className="rounded-md border border-border bg-card">
                   <Counter
                     label="Windows"
                     sub="GH₵50 per window"
@@ -309,7 +309,7 @@ function BookPage() {
 
             {/* Sticky summary */}
             <aside className="lg:sticky lg:top-24 lg:h-fit">
-              <div className="rounded-3xl border border-border bg-card p-6 shadow-[var(--shadow-card)]">
+              <div className="rounded-md border border-border bg-card p-6 shadow-[var(--shadow-card)]">
                 <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Estimate</p>
                 <div className="mt-2 text-4xl font-semibold tracking-tight text-[color:var(--primary-deep)]">
                   {fmt(total)}
@@ -338,7 +338,7 @@ function BookPage() {
                 <button
                   type="submit"
                   disabled={!canSubmit}
-                  className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground shadow-[var(--shadow-soft)] transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
+                  className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary px-6 py-3 text-sm font-medium text-primary-foreground shadow-[var(--shadow-soft)] transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
                 >
                   Request booking <ArrowRight className="h-4 w-4" />
                 </button>
@@ -358,7 +358,7 @@ function BookPage() {
       <style>{`
         .input {
           width: 100%;
-          border-radius: 0.75rem;
+          border-radius: var(--radius);
           border: 1px solid var(--border);
           background: var(--background);
           padding: 0.625rem 0.875rem;
@@ -381,7 +381,7 @@ function Step({ number, title, children }: { number: string; title: string; chil
     <Reveal>
       <div>
         <div className="mb-4 flex items-center gap-3">
-          <span className="grid h-7 w-7 place-items-center rounded-full bg-primary/15 text-xs font-semibold text-[color:var(--primary-deep)]">
+          <span className="grid h-7 w-7 place-items-center rounded-md bg-primary/15 text-xs font-semibold text-[color:var(--primary-deep)]">
             {number}
           </span>
           <h2 className="text-lg font-semibold tracking-tight">{title}</h2>
@@ -436,7 +436,7 @@ function TileCounter({
   const active = value > 0;
   return (
     <div
-      className={`rounded-2xl border p-4 transition-all ${active ? "border-primary bg-primary/5" : "border-border bg-card"}`}
+      className={`rounded-md border p-4 transition-all ${active ? "border-primary bg-primary/5" : "border-border bg-card"}`}
     >
       <div className="text-sm font-medium">{label}</div>
       <div className="text-xs text-muted-foreground">{price}</div>
@@ -467,7 +467,7 @@ function IconBtn({
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className="grid h-8 w-8 place-items-center rounded-full border border-border bg-background text-foreground transition-colors hover:border-primary hover:text-[color:var(--primary-deep)] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-border"
+      className="grid h-8 w-8 place-items-center rounded-md border border-border bg-background text-foreground transition-colors hover:border-primary hover:text-[color:var(--primary-deep)] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-border"
     >
       {children}
     </button>

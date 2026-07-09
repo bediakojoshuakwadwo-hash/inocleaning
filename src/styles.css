@@ -19,6 +19,7 @@
  */
 
 @theme inline {
+  --font-sans: "Montserrat", sans-serif;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -63,7 +64,7 @@
 }
 
 :root {
-  --radius: 0.875rem;
+  --radius: 0.375rem;
   /* Brand: white + #74B8BB teal */
   --background: oklch(1 0 0);
   --foreground: oklch(0.22 0.03 210);
@@ -87,8 +88,8 @@
   --ring: oklch(0.735 0.062 199);
   --gradient-brand: linear-gradient(135deg, oklch(0.78 0.06 199), oklch(0.66 0.07 200));
   --gradient-soft: linear-gradient(180deg, oklch(0.985 0.008 200), oklch(1 0 0));
-  --shadow-soft: 0 10px 30px -12px color-mix(in oklab, oklch(0.735 0.062 199) 35%, transparent);
-  --shadow-card: 0 1px 2px oklch(0.22 0.03 210 / 0.04), 0 8px 24px -12px oklch(0.22 0.03 210 / 0.08);
+  --shadow-soft: 0 4px 6px -1px color-mix(in oklab, oklch(0.735 0.062 199) 20%, transparent);
+  --shadow-card: 0 1px 2px oklch(0.22 0.03 210 / 0.1), 0 4px 12px -2px oklch(0.22 0.03 210 / 0.1);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -147,5 +148,6 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+    font-family: var(--font-sans);
   }
 }
