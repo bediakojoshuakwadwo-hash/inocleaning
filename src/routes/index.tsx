@@ -67,7 +67,7 @@ function Index() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.2 }}
-              className="mt-5 max-w-lg text-base text-muted-foreground sm:text-lg"
+              className="mt-5 max-w-lg text-base font-medium text-muted-foreground sm:text-lg"
             >
               Home, office, sofa, carpet or post-construction — we bring the sparkle. Book in minutes, we handle the rest.
             </motion.p>
@@ -92,7 +92,7 @@ function Index() {
               </a>
             </motion.div>
 
-            <div className="mt-10 flex flex-wrap gap-6 text-sm text-muted-foreground">
+            <div className="mt-10 flex flex-wrap gap-6 text-sm font-medium text-muted-foreground">
               {["Vetted crew", "Eco-friendly", "Satisfaction guaranteed"].map((t) => (
                 <div key={t} className="flex items-center gap-2">
                   <Check className="h-4 w-4 text-[color:var(--primary)]" /> {t}
@@ -107,8 +107,8 @@ function Index() {
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
             className="relative"
           >
-            <div className="overflow-hidden rounded-md border border-border bg-card shadow-[var(--shadow-card)]">
-              <img src={hero.url} alt="Professional Ino cleaner ready to serve" className="h-full w-full object-cover" />
+            <div className="w-full h-full">
+              <img src="/final.png" alt="Professional Ino cleaner ready to serve" className="h-full w-full object-contain" />
             </div>
           </motion.div>
         </div>
@@ -189,14 +189,16 @@ function Index() {
           <div className="relative overflow-hidden rounded-md bg-primary px-8 py-16 text-center">
             <h2 className="relative text-3xl font-semibold tracking-tight text-white sm:text-4xl">Ready for a fresh, spotless space?</h2>
             <p className="relative mx-auto mt-3 max-w-xl text-white/90">Build your booking in a couple of minutes and see the price as you go.</p>
-            <Link
-              to="/book"
-              className="relative mt-8 inline-flex items-center gap-2 rounded-md bg-background px-6 py-3 text-sm font-medium text-foreground shadow-sm transition-transform hover:-translate-y-0.5"
-            >
-              Start booking <ArrowRight className="h-4 w-4" />
-            </Link>
-            <div className="relative mt-6 inline-flex items-center gap-2 text-sm text-white/90">
-              <MapPin className="h-4 w-4" /> Serving Kumasi & KNUST area
+            <div className="relative mt-8 flex flex-col items-center gap-4">
+              <Link
+                to="/book"
+                className="inline-flex items-center gap-2 rounded-md bg-background px-6 py-3 text-sm font-medium text-foreground shadow-sm transition-transform hover:-translate-y-0.5"
+              >
+                Start booking <ArrowRight className="h-4 w-4" />
+              </Link>
+              <div className="inline-flex items-center gap-2 text-sm text-white/90">
+                <MapPin className="h-4 w-4" /> Serving Kumasi & KNUST area
+              </div>
             </div>
           </div>
         </Reveal>

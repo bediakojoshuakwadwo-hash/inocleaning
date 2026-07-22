@@ -89,15 +89,18 @@ function BookPage() {
     delta: number,
   ) => setter((prev) => ({ ...prev, [id]: Math.max(0, (prev[id] ?? 0) + delta) }));
 
+  const isPremiumJob = job === "post" || job === "renovated";
+  const priceOffset = isPremiumJob ? 50 : 0;
+
   const total = useMemo(() => {
     let t = 0;
-    for (const r of ROOMS) t += (rooms[r.id] ?? 0) * r.price;
-    for (const s of SOFAS) t += (sofas[s.id] ?? 0) * s.price;
-    for (const c of CARPETS) t += (carpets[c.id] ?? 0) * c.price;
-    for (const c of CONDITIONS) if (conds[c.id]) t += c.price;
-    t += windows * 50;
+    for (const r of ROOMS) t += (rooms[r.id] ?? 0) * (r.price + priceOffset);
+    for (const s of SOFAS) t += (sofas[s.id] ?? 0) * (s.price + priceOffset);
+    for (const c of CARPETS) t += (carpets[c.id] ?? 0) * (c.price + priceOffset);
+    for (const c of CONDITIONS) if (conds[c.id]) t += (c.price + priceOffset);
+    t += windows * (50 + priceOffset);
     return t;
-  }, [rooms, sofas, carpets, conds, windows]);
+  }, [rooms, sofas, carpets, conds, windows, priceOffset]);
 
   const canSubmit = job && total > 0 && contact.name && contact.phone && contact.location;
 
@@ -184,7 +187,7 @@ function BookPage() {
                     <Counter
                       key={r.id}
                       label={r.label}
-                      sub={`${fmt(r.price)} each`}
+                      sub={`${fmt(r.price + priceOffset)} each`}
                       value={rooms[r.id] ?? 0}
                       onChange={(d) => bump(setRooms, r.id, d)}
                     />
@@ -198,7 +201,7 @@ function BookPage() {
                     <TileCounter
                       key={s.id}
                       label={s.label}
-                      price={fmt(s.price)}
+                      price={fmt(s.price + priceOffset)}
                       value={sofas[s.id] ?? 0}
                       onChange={(d) => bump(setSofas, s.id, d)}
                     />
@@ -212,7 +215,7 @@ function BookPage() {
                     <TileCounter
                       key={c.id}
                       label={c.label}
-                      price={`${fmt(c.price)} each`}
+                      price={`${fmt(c.price + priceOffset)} each`}
                       value={carpets[c.id] ?? 0}
                       onChange={(d) => bump(setCarpets, c.id, d)}
                     />
@@ -235,7 +238,7 @@ function BookPage() {
                       >
                         <div>
                           <div className="text-sm font-medium">{c.label}</div>
-                          <div className="text-xs text-muted-foreground">+{fmt(c.price)}</div>
+                          <div className="text-xs text-muted-foreground">+{fmt(c.price + priceOffset)}</div>
                         </div>
                         <span className={`grid h-6 w-6 place-items-center rounded-md border ${active ? "border-primary bg-primary text-primary-foreground" : "border-border"}`}>
                           {active && <Check className="h-3.5 w-3.5" />}
@@ -250,7 +253,7 @@ function BookPage() {
                 <div className="rounded-md border border-border bg-card">
                   <Counter
                     label="Windows"
-                    sub="GH₵50 per window"
+                    sub={`${fmt(50 + priceOffset)} per window`}
                     value={windows}
                     onChange={(d) => setWindows((v) => Math.max(0, v + d))}
                   />
