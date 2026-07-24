@@ -13,6 +13,8 @@ import {
   Check,
   ArrowRight,
   Download,
+  Store,
+  Warehouse,
 } from "lucide-react";
 import { SiteNav, SiteFooter } from "@/components/SiteNav";
 import { Reveal } from "@/components/Reveal";
@@ -30,12 +32,14 @@ export const Route = createFileRoute("/book")({
 type JobType = { id: string; label: string; icon: typeof Sparkles };
 
 const JOB_TYPES: JobType[] = [
-  { id: "deep", label: "Deep Cleaning", icon: Sparkles },
-  { id: "post", label: "Post Construction", icon: Hammer },
-  { id: "in", label: "Move In Cleaning", icon: PackageOpen },
-  { id: "out", label: "Move Out Cleaning", icon: Truck },
-  { id: "renovated", label: "Renovated House", icon: Wrench },
-  { id: "living", label: "Living In Cleaning", icon: Home },
+  { id: "deep", label: "Deep Cleaning (Residential)", icon: Sparkles },
+  { id: "post", label: "Post Construction (Residential)", icon: Hammer },
+  { id: "in", label: "Move In Cleaning (Residential)", icon: PackageOpen },
+  { id: "out", label: "Move Out Cleaning (Residential)", icon: Truck },
+  { id: "renovated", label: "Renovated House (Residential)", icon: Wrench },
+  { id: "living", label: "Living In Cleaning (Residential)", icon: Home },
+  { id: "shop_post", label: "Post Construction (Shop)", icon: Store },
+  { id: "warehouse", label: "Warehouse Cleaning", icon: Warehouse },
 ];
 
 const ROOMS = [
@@ -63,11 +67,17 @@ const CARPETS = [
   { id: "cl", label: "Large", price: 350 },
 ];
 
+const FRIDGES = [
+  { id: "f_sm", label: "Small Fridge", price: 200 },
+  { id: "f_md", label: "Medium Fridge", price: 300 },
+  { id: "f_lg", label: "Large Fridge", price: 400 },
+];
+
 const CONDITIONS = [
   { id: "paint", label: "Paint or POP residue", price: 300 },
   { id: "stains", label: "Tough stains", price: 200 },
-  { id: "dirty", label: "Heavily soiled", price: 300 },
   { id: "popdirty", label: "POP residue + very dirty", price: 500 },
+  { id: "heavy", label: "Moving of heavy furniture and equipment", price: 400 },
 ];
 
 function fmt(n: number) {
@@ -76,11 +86,16 @@ function fmt(n: number) {
 
 function BookPage() {
   const [job, setJob] = useState<string | null>(null);
+  const [shopCount, setShopCount] = useState(1);
+  const [warehouseCount, setWarehouseCount] = useState(1);
   const [rooms, setRooms] = useState<Record<string, number>>({});
   const [sofas, setSofas] = useState<Record<string, number>>({});
   const [carpets, setCarpets] = useState<Record<string, number>>({});
   const [conds, setConds] = useState<Record<string, boolean>>({});
   const [windows, setWindows] = useState(0);
+  const [utensils, setUtensils] = useState(false);
+  const [folding, setFolding] = useState(false);
+  const [fridges, setFridges] = useState<Record<string, number>>({});
   const [contact, setContact] = useState({ name: "", phone: "", location: "", date: "", notes: "" });
   const [submitted, setSubmitted] = useState(false);
 
@@ -93,15 +108,28 @@ function BookPage() {
   const isPremiumJob = job === "post" || job === "renovated";
   const priceOffset = isPremiumJob ? 50 : 0;
 
-  const total = useMemo(() => {
+  const totalRaw = useMemo(() => {
     let t = 0;
-    for (const r of ROOMS) t += (rooms[r.id] ?? 0) * (r.price + priceOffset);
-    for (const s of SOFAS) t += (sofas[s.id] ?? 0) * (s.price + priceOffset);
-    for (const c of CARPETS) t += (carpets[c.id] ?? 0) * (c.price + priceOffset);
+    if (job === "shop_post") {
+      t += Math.max(1, shopCount) * 1600;
+    } else if (job === "warehouse") {
+      t += Math.max(1, warehouseCount) * 8000;
+    } else {
+      for (const r of ROOMS) t += (rooms[r.id] ?? 0) * (r.price + priceOffset);
+      for (const s of SOFAS) t += (sofas[s.id] ?? 0) * (s.price + priceOffset);
+      for (const c of CARPETS) t += (carpets[c.id] ?? 0) * (c.price + priceOffset);
+      t += windows * (50 + priceOffset);
+      if (utensils) t += (300 + priceOffset);
+      for (const f of FRIDGES) t += (fridges[f.id] ?? 0) * (f.price + priceOffset);
+    }
+    
     for (const c of CONDITIONS) if (conds[c.id]) t += (c.price + priceOffset);
-    t += windows * (50 + priceOffset);
+    
     return t;
-  }, [rooms, sofas, carpets, conds, windows, priceOffset]);
+  }, [job, shopCount, warehouseCount, rooms, sofas, carpets, conds, windows, utensils, fridges, priceOffset]);
+
+  const discount = totalRaw > 1500 ? totalRaw * 0.02 : 0;
+  const total = totalRaw - discount;
 
   const canSubmit = job && total > 0 && contact.name && contact.phone && contact.location;
 
@@ -160,20 +188,42 @@ function BookPage() {
     const tableData: [string, string, string, string][] = [];
     const pdfFmt = (n: number) => `GHS ${n.toLocaleString()}`;
 
-    for (const r of ROOMS) {
-      if (rooms[r.id]) tableData.push([r.label, "-", String(rooms[r.id]), pdfFmt(r.price + priceOffset)]);
+    if (job === "shop_post") {
+      tableData.push(["Shop Postconstruction", "-", String(shopCount), pdfFmt(1600)]);
+    } else if (job === "warehouse") {
+      tableData.push(["Warehouse Cleaning", "-", String(warehouseCount), pdfFmt(8000)]);
+    } else {
+      for (const r of ROOMS) {
+        if (rooms[r.id]) tableData.push([r.label, "-", String(rooms[r.id]), pdfFmt(r.price + priceOffset)]);
+      }
+      for (const s of SOFAS) {
+        if (sofas[s.id]) tableData.push([s.label + " Sofa", "-", String(sofas[s.id]), pdfFmt(s.price + priceOffset)]);
+      }
+      for (const c of CARPETS) {
+        if (carpets[c.id]) tableData.push([c.label + " Carpet", "-", String(carpets[c.id]), pdfFmt(c.price + priceOffset)]);
+      }
+      if (windows > 0) {
+        tableData.push(["Windows", "-", String(windows), pdfFmt(50 + priceOffset)]);
+      }
+      if (utensils) {
+        tableData.push(["Utensils", "-", "-", pdfFmt(300 + priceOffset)]);
+      }
+      for (const f of FRIDGES) {
+        if (fridges[f.id]) {
+          tableData.push([f.label, "-", String(fridges[f.id]), pdfFmt(f.price + priceOffset)]);
+        }
+      }
+      if (folding) {
+        tableData.push(["Folding of clothes", "-", "-", "Upon inspection"]);
+      }
     }
-    for (const s of SOFAS) {
-      if (sofas[s.id]) tableData.push([s.label + " Sofa", "-", String(sofas[s.id]), pdfFmt(s.price + priceOffset)]);
-    }
-    for (const c of CARPETS) {
-      if (carpets[c.id]) tableData.push([c.label + " Carpet", "-", String(carpets[c.id]), pdfFmt(c.price + priceOffset)]);
-    }
-    if (windows > 0) {
-      tableData.push(["Windows", "-", String(windows), pdfFmt(50 + priceOffset)]);
-    }
+
     for (const c of CONDITIONS) {
       if (conds[c.id]) tableData.push([c.label, "Condition", "-", pdfFmt(c.price + priceOffset)]);
+    }
+
+    if (discount > 0) {
+      tableData.push(["Discount (2% on > 1500)", "-", "-", `-${pdfFmt(discount)}`]);
     }
 
     autoTable(doc, {
@@ -213,6 +263,9 @@ function BookPage() {
       <SiteNav />
 
       <section className="border-b border-border bg-[color:var(--muted)]">
+        <div className="bg-primary/10 px-4 py-3 text-center text-sm font-medium text-[color:var(--primary-deep)]">
+          🎉 Special Offer: Any bill beyond GH₵1,500 gets an automatic 2% discount!
+        </div>
         <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
           <Reveal>
             <p className="text-xs font-semibold uppercase tracking-widest text-[color:var(--primary-deep)]">Book a cleaning</p>
@@ -306,86 +359,168 @@ function BookPage() {
                 </div>
               </Step>
 
-              <Step number="2" title="Rooms">
-                <div className="divide-y divide-border rounded-md border border-border bg-card">
-                  {ROOMS.map((r) => (
+              {job === "shop_post" && (
+                <Step number="2" title="Quantity">
+                  <div className="rounded-md border border-border bg-card">
                     <Counter
-                      key={r.id}
-                      label={r.label}
-                      sub={`${fmt(r.price + priceOffset)} each`}
-                      value={rooms[r.id] ?? 0}
-                      onChange={(d) => bump(setRooms, r.id, d)}
+                      label="Number of Shops"
+                      sub={`${fmt(1600)} each`}
+                      value={shopCount}
+                      onChange={(d) => setShopCount((v) => Math.max(1, v + d))}
                     />
-                  ))}
-                </div>
-              </Step>
+                  </div>
+                </Step>
+              )}
 
-              <Step number="3" title="Sofa cleaning">
-                <div className="grid gap-3 sm:grid-cols-2">
-                  {SOFAS.map((s) => (
-                    <TileCounter
-                      key={s.id}
-                      label={s.label}
-                      price={fmt(s.price + priceOffset)}
-                      value={sofas[s.id] ?? 0}
-                      onChange={(d) => bump(setSofas, s.id, d)}
+              {job === "warehouse" && (
+                <Step number="2" title="Quantity">
+                  <div className="rounded-md border border-border bg-card">
+                    <Counter
+                      label="Number of Warehouses"
+                      sub={`${fmt(8000)} each`}
+                      value={warehouseCount}
+                      onChange={(d) => setWarehouseCount((v) => Math.max(1, v + d))}
                     />
-                  ))}
-                </div>
-              </Step>
+                  </div>
+                </Step>
+              )}
 
-              <Step number="4" title="Carpet cleaning">
-                <div className="grid gap-3 sm:grid-cols-3">
-                  {CARPETS.map((c) => (
-                    <TileCounter
-                      key={c.id}
-                      label={c.label}
-                      price={`${fmt(c.price + priceOffset)} each`}
-                      value={carpets[c.id] ?? 0}
-                      onChange={(d) => bump(setCarpets, c.id, d)}
-                    />
-                  ))}
-                </div>
-              </Step>
+              {job && job !== "shop_post" && job !== "warehouse" && (
+                <>
+                  <Step number="2" title="Rooms">
+                    <div className="divide-y divide-border rounded-md border border-border bg-card">
+                      {ROOMS.map((r) => (
+                        <Counter
+                          key={r.id}
+                          label={r.label}
+                          sub={`${fmt(r.price + priceOffset)} each`}
+                          value={rooms[r.id] ?? 0}
+                          onChange={(d) => bump(setRooms, r.id, d)}
+                        />
+                      ))}
+                    </div>
+                  </Step>
 
-              <Step number="5" title="Special conditions">
-                <div className="grid gap-3 sm:grid-cols-2">
-                  {CONDITIONS.map((c) => {
-                    const active = !!conds[c.id];
-                    return (
-                      <button
-                        key={c.id}
-                        type="button"
-                        onClick={() => setConds((p) => ({ ...p, [c.id]: !p[c.id] }))}
-                        className={`flex items-center justify-between rounded-md border p-4 text-left transition-all ${
-                          active ? "border-primary bg-primary/5" : "border-border bg-card hover:border-primary/40"
-                        }`}
-                      >
-                        <div>
-                          <div className="text-sm font-medium">{c.label}</div>
-                          <div className="text-xs text-muted-foreground">+{fmt(c.price + priceOffset)}</div>
-                        </div>
-                        <span className={`grid h-6 w-6 place-items-center rounded-md border ${active ? "border-primary bg-primary text-primary-foreground" : "border-border"}`}>
-                          {active && <Check className="h-3.5 w-3.5" />}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </Step>
+                  <Step number="3" title="Sofa cleaning">
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      {SOFAS.map((s) => (
+                        <TileCounter
+                          key={s.id}
+                          label={s.label}
+                          price={fmt(s.price + priceOffset)}
+                          value={sofas[s.id] ?? 0}
+                          onChange={(d) => bump(setSofas, s.id, d)}
+                        />
+                      ))}
+                    </div>
+                  </Step>
 
-              <Step number="6" title="Windows">
-                <div className="rounded-md border border-border bg-card">
-                  <Counter
-                    label="Windows"
-                    sub={`${fmt(50 + priceOffset)} per window`}
-                    value={windows}
-                    onChange={(d) => setWindows((v) => Math.max(0, v + d))}
-                  />
-                </div>
-              </Step>
+                  <Step number="4" title="Carpet cleaning">
+                    <div className="grid gap-3 sm:grid-cols-3">
+                      {CARPETS.map((c) => (
+                        <TileCounter
+                          key={c.id}
+                          label={c.label}
+                          price={`${fmt(c.price + priceOffset)} each`}
+                          value={carpets[c.id] ?? 0}
+                          onChange={(d) => bump(setCarpets, c.id, d)}
+                        />
+                      ))}
+                    </div>
+                  </Step>
 
-              <Step number="7" title="Your details">
+                  <Step number="5" title="Windows">
+                    <div className="rounded-md border border-border bg-card">
+                      <Counter
+                        label="Windows"
+                        sub={`${fmt(50 + priceOffset)} per window`}
+                        value={windows}
+                        onChange={(d) => setWindows((v) => Math.max(0, v + d))}
+                      />
+                    </div>
+                  </Step>
+
+                  <Step number="6" title="Others">
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <div className="col-span-1 sm:col-span-2 grid gap-3 sm:grid-cols-2">
+                        <button
+                          type="button"
+                          onClick={() => setUtensils((p) => !p)}
+                          className={`flex items-center justify-between rounded-md border p-4 text-left transition-all ${
+                            utensils ? "border-primary bg-primary/5" : "border-border bg-card hover:border-primary/40"
+                          }`}
+                        >
+                          <div>
+                            <div className="text-sm font-medium">Utensils</div>
+                            <div className="text-xs text-muted-foreground">+{fmt(300 + priceOffset)}</div>
+                          </div>
+                          <span className={`grid h-6 w-6 place-items-center rounded-md border ${utensils ? "border-primary bg-primary text-primary-foreground" : "border-border"}`}>
+                            {utensils && <Check className="h-3.5 w-3.5" />}
+                          </span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => setFolding((p) => !p)}
+                          className={`flex items-center justify-between rounded-md border p-4 text-left transition-all ${
+                            folding ? "border-primary bg-primary/5" : "border-border bg-card hover:border-primary/40"
+                          }`}
+                        >
+                          <div>
+                            <div className="text-sm font-medium">Folding of clothes</div>
+                            <div className="text-xs text-muted-foreground">Price: Upon inspection</div>
+                          </div>
+                          <span className={`grid h-6 w-6 place-items-center rounded-md border ${folding ? "border-primary bg-primary text-primary-foreground" : "border-border"}`}>
+                            {folding && <Check className="h-3.5 w-3.5" />}
+                          </span>
+                        </button>
+                      </div>
+
+                      <div className="col-span-1 sm:col-span-2 divide-y divide-border rounded-md border border-border bg-card">
+                        {FRIDGES.map((f) => (
+                          <Counter
+                            key={f.id}
+                            label={f.label}
+                            sub={`${fmt(f.price + priceOffset)} each`}
+                            value={fridges[f.id] ?? 0}
+                            onChange={(d) => bump(setFridges, f.id, d)}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </Step>
+                </>
+              )}
+
+              {job && (
+                <Step number={job === "shop_post" || job === "warehouse" ? "3" : "7"} title="Special conditions">
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    {CONDITIONS.map((c) => {
+                      const active = !!conds[c.id];
+                      return (
+                        <button
+                          key={c.id}
+                          type="button"
+                          onClick={() => setConds((p) => ({ ...p, [c.id]: !p[c.id] }))}
+                          className={`flex items-center justify-between rounded-md border p-4 text-left transition-all ${
+                            active ? "border-primary bg-primary/5" : "border-border bg-card hover:border-primary/40"
+                          }`}
+                        >
+                          <div>
+                            <div className="text-sm font-medium">{c.label}</div>
+                            <div className="text-xs text-muted-foreground">+{fmt(c.price + priceOffset)}</div>
+                          </div>
+                          <span className={`grid h-6 w-6 place-items-center rounded-md border ${active ? "border-primary bg-primary text-primary-foreground" : "border-border"}`}>
+                            {active && <Check className="h-3.5 w-3.5" />}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </Step>
+              )}
+
+              <Step number={!job ? "2" : job === "shop_post" || job === "warehouse" ? "4" : "8"} title="Your details">
                 <div className="grid gap-4 sm:grid-cols-2">
                   <Field label="Full name" required>
                     <input
@@ -448,27 +583,48 @@ function BookPage() {
 
                 <div className="mt-6 space-y-2 text-sm">
                   <SummaryLine label="Service" value={JOB_TYPES.find((j) => j.id === job)?.label ?? "—"} />
-                  <SummaryLine
-                    label="Rooms"
-                    value={String(Object.values(rooms).reduce((a, b) => a + b, 0))}
-                  />
-                  <SummaryLine
-                    label="Sofas"
-                    value={String(Object.values(sofas).reduce((a, b) => a + b, 0))}
-                  />
-                  <SummaryLine
-                    label="Carpets"
-                    value={String(Object.values(carpets).reduce((a, b) => a + b, 0))}
-                  />
-                  <SummaryLine label="Windows" value={String(windows)} />
+                  {job === "shop_post" ? (
+                    <SummaryLine label="Shops" value={String(Math.max(1, shopCount))} />
+                  ) : job === "warehouse" ? (
+                    <SummaryLine label="Warehouses" value={String(Math.max(1, warehouseCount))} />
+                  ) : (
+                    <>
+                      <SummaryLine
+                        label="Rooms"
+                        value={String(Object.values(rooms).reduce((a, b) => a + b, 0))}
+                      />
+                      <SummaryLine
+                        label="Sofas"
+                        value={String(Object.values(sofas).reduce((a, b) => a + b, 0))}
+                      />
+                      <SummaryLine
+                        label="Carpets"
+                        value={String(Object.values(carpets).reduce((a, b) => a + b, 0))}
+                      />
+                      <SummaryLine label="Windows" value={String(windows)} />
+                      {utensils && <SummaryLine label="Utensils" value="Yes" />}
+                      {Object.values(fridges).reduce((a, b) => a + b, 0) > 0 && (
+                        <SummaryLine
+                          label="Fridges"
+                          value={String(Object.values(fridges).reduce((a, b) => a + b, 0))}
+                        />
+                      )}
+                      {folding && <SummaryLine label="Folding clothes" value="Yes" />}
+                    </>
+                  )}
+                  {discount > 0 && (
+                    <div className="mt-2 border-t border-border pt-2">
+                      <SummaryLine label="Discount (2%)" value={`-${fmt(discount)}`} />
+                    </div>
+                  )}
                 </div>
 
                 <button
                   type="submit"
                   disabled={!canSubmit}
-                  className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary px-6 py-3 text-sm font-medium text-primary-foreground shadow-[var(--shadow-soft)] transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
+                  className="group mt-6 inline-flex w-full items-center justify-center gap-2 rounded-md border border-transparent bg-primary px-6 py-3 text-sm font-medium text-primary-foreground shadow-[var(--shadow-soft)] transition-all hover:-translate-y-0.5 hover:bg-transparent hover:border-primary hover:text-primary disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:-translate-y-0 disabled:hover:border-transparent disabled:hover:bg-primary disabled:hover:text-primary-foreground"
                 >
-                  Request booking <ArrowRight className="h-4 w-4" />
+                  Request booking <ArrowRight className="h-4 w-4 transition-transform group-hover:animate-fly" />
                 </button>
                 {!canSubmit && (
                   <p className="mt-3 text-center text-xs text-muted-foreground">

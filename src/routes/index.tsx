@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { motion } from "motion/react";
+import { useRef, useEffect } from "react";
+import { motion, useMotionValue, useTransform, animate, useInView } from "motion/react";
 import {
   Home,
   Building2,
@@ -79,10 +80,10 @@ function Index() {
             >
               <Link
                 to="/book"
-                className="group inline-flex items-center gap-2 rounded-md bg-primary px-6 py-3 text-sm font-medium text-primary-foreground shadow-sm transition-transform hover:-translate-y-0.5"
+                className="group inline-flex items-center gap-2 rounded-md border border-transparent bg-primary px-6 py-3 text-sm font-medium text-primary-foreground shadow-sm transition-all hover:-translate-y-0.5 hover:bg-transparent hover:border-primary hover:text-primary"
               >
                 Book a cleaning
-                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:animate-fly" />
               </Link>
               <a
                 href="tel:+233530268611"
@@ -111,6 +112,33 @@ function Index() {
               <img src="/final.png" alt="Professional Ino cleaner ready to serve" className="h-full w-full object-contain" />
             </div>
           </motion.div>
+        </div>
+      </section>
+
+      {/* Discount Banner */}
+      <section id="discount-section" className="flex min-h-[85vh] items-center justify-center bg-primary py-20 text-primary-foreground">
+        <div className="mx-auto max-w-4xl px-4 text-center sm:px-6">
+          <Reveal>
+            <h2 className="text-[10rem] font-black leading-none tracking-tighter lg:text-[16rem]">
+              <AnimatedDiscount />%
+            </h2>
+            <h3 className="mt-2 text-4xl font-bold tracking-widest text-primary-foreground/90 uppercase lg:mt-6 lg:text-7xl">
+              Discount
+            </h3>
+          </Reveal>
+          <Reveal delay={0.2}>
+            <p className="mx-auto mt-10 max-w-2xl text-xl font-medium leading-relaxed text-primary-foreground/90 md:text-2xl lg:mt-12 lg:text-3xl">
+              Special offer! Any bill beyond <strong>GH₵1,500</strong> gets an automatic 2% discount applied to your final invoice.
+            </p>
+            <div className="mt-12 lg:mt-16">
+              <Link
+                to="/book"
+                className="group inline-flex items-center gap-2 rounded-full border border-transparent bg-background px-8 py-4 text-base font-semibold text-foreground shadow-xl transition-all hover:-translate-y-1 hover:bg-transparent hover:border-background hover:text-background hover:shadow-2xl lg:text-lg"
+              >
+                Claim discount now <ArrowRight className="h-5 w-5 transition-transform group-hover:animate-fly" />
+              </Link>
+            </div>
+          </Reveal>
         </div>
       </section>
 
@@ -192,9 +220,9 @@ function Index() {
             <div className="relative mt-8 flex flex-col items-center gap-4">
               <Link
                 to="/book"
-                className="inline-flex items-center gap-2 rounded-md bg-background px-6 py-3 text-sm font-medium text-foreground shadow-sm transition-transform hover:-translate-y-0.5"
+                className="group inline-flex items-center gap-2 rounded-md border border-transparent bg-background px-6 py-3 text-sm font-medium text-foreground shadow-sm transition-all hover:-translate-y-0.5 hover:bg-transparent hover:border-background hover:text-background"
               >
-                Start booking <ArrowRight className="h-4 w-4" />
+                Start booking <ArrowRight className="h-4 w-4 transition-transform group-hover:animate-fly" />
               </Link>
               <div className="inline-flex items-center gap-2 text-sm text-white/90">
                 <MapPin className="h-4 w-4" /> Serving Kumasi & KNUST area
@@ -207,4 +235,21 @@ function Index() {
       <SiteFooter />
     </div>
   );
+}
+
+function AnimatedDiscount() {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { margin: "-100px" });
+  const count = useMotionValue(100);
+  const rounded = useTransform(count, (latest) => Math.round(latest));
+
+  useEffect(() => {
+    if (isInView) {
+      count.set(100);
+      const controls = animate(count, 2, { duration: 1.5, ease: "easeOut" });
+      return () => controls.stop();
+    }
+  }, [isInView, count]);
+
+  return <motion.span ref={ref}>{rounded}</motion.span>;
 }

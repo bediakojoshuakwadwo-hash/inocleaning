@@ -19,7 +19,7 @@ export function SiteNav() {
           </a>
           <Link
             to="/book"
-            className="inline-flex items-center rounded-md bg-primary px-5 py-2 text-sm font-medium text-primary-foreground shadow-[var(--shadow-soft)] transition-transform hover:-translate-y-0.5"
+            className="inline-flex items-center rounded-md border border-transparent bg-primary px-5 py-2 text-sm font-medium text-primary-foreground shadow-[var(--shadow-soft)] transition-all hover:-translate-y-0.5 hover:bg-transparent hover:border-primary hover:text-primary"
           >
             Book now
           </Link>

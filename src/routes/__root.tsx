@@ -7,7 +7,7 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 function NotFoundComponent() {
@@ -113,6 +113,35 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const [isOverDiscount, setIsOverDiscount] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const el = document.getElementById("discount-section");
+      if (!el) {
+        if (isOverDiscount) setIsOverDiscount(false);
+        return;
+      }
+      const rect = el.getBoundingClientRect();
+      const buttonTop = window.innerHeight - 80;
+      const buttonBottom = window.innerHeight - 24;
+      
+      if (rect.top <= buttonBottom && rect.bottom >= buttonTop) {
+        setIsOverDiscount(true);
+      } else {
+        setIsOverDiscount(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("resize", handleScroll);
+    handleScroll();
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleScroll);
+    };
+  }, [isOverDiscount]);
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -123,7 +152,9 @@ function RootComponent() {
         href="https://wa.me/233530268611"
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-[var(--shadow-soft)] transition-transform hover:-translate-y-1 hover:shadow-[var(--shadow-card)]"
+        className={`fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full shadow-[var(--shadow-soft)] transition-all hover:-translate-y-1 hover:shadow-[var(--shadow-card)] ${
+          isOverDiscount ? "bg-white text-black border border-border" : "bg-primary text-primary-foreground"
+        }`}
         aria-label="Chat on WhatsApp"
       >
         <svg
