@@ -131,7 +131,8 @@ function BookPage() {
   const discount = totalRaw > 1500 ? totalRaw * 0.02 : 0;
   const total = totalRaw - discount;
 
-  const canSubmit = job && total > 0 && contact.name && contact.phone && contact.location;
+  const isPhoneInvalid = contact.phone.length > 0 && (contact.phone.length < 10 || !contact.phone.startsWith("0"));
+  const canSubmit = job && total > 0 && contact.name && contact.phone.length === 10 && contact.phone.startsWith("0") && contact.location;
 
   async function generateInvoice() {
     const { jsPDF } = await import("jspdf");
@@ -531,13 +532,18 @@ function BookPage() {
                       placeholder="Ama Owusu"
                     />
                   </Field>
-                  <Field label="Phone" required>
+                  <Field label="Phone (Begins with 0)" required>
                     <input
                       required
+                      maxLength={10}
                       value={contact.phone}
-                      onChange={(e) => setContact({ ...contact, phone: e.target.value })}
-                      className="input"
-                      placeholder="0530 268 611"
+                      onChange={(e) => {
+                        const val = e.target.value.replace(/\D/g, "");
+                        if (val.length > 0 && val[0] !== "0") return;
+                        setContact({ ...contact, phone: val });
+                      }}
+                      className={`input ${isPhoneInvalid ? "error" : ""}`}
+                      placeholder="0530268611"
                     />
                   </Field>
                   <Field label="Location" required>
@@ -654,6 +660,13 @@ function BookPage() {
         .input:focus {
           border-color: var(--primary);
           box-shadow: 0 0 0 3px color-mix(in oklab, var(--primary) 20%, transparent);
+        }
+        .input.error {
+          border-color: #ef4444;
+        }
+        .input.error:focus {
+          border-color: #ef4444;
+          box-shadow: 0 0 0 3px color-mix(in oklab, #ef4444 20%, transparent);
         }
       `}</style>
     </div>
