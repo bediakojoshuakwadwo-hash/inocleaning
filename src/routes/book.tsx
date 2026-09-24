@@ -43,15 +43,15 @@ const JOB_TYPES: JobType[] = [
 ];
 
 const ROOMS = [
-  { id: "bedroom", label: "Bedroom", price: 250 },
-  { id: "hall", label: "Hall", price: 300 },
-  { id: "kitchen", label: "Kitchen", price: 300 },
-  { id: "washroom", label: "Washroom", price: 250 },
+  { id: "bedroom", label: "Bedroom", price: 170 },
+  { id: "hall", label: "Hall", price: 250 },
+  { id: "kitchen", label: "Kitchen", price: 250 },
+  { id: "washroom", label: "Washroom", price: 170 },
   { id: "garage", label: "Garage", price: 150 },
   { id: "balcony", label: "Balcony / Veranda", price: 150 },
   { id: "store", label: "Store", price: 200 },
   { id: "study", label: "Study", price: 200 },
-  { id: "dining", label: "Dining", price: 250 },
+  { id: "dining", label: "Dining", price: 170 },
 ];
 
 const SOFAS = [
@@ -69,15 +69,15 @@ const CARPETS = [
 
 const FRIDGES = [
   { id: "f_sm", label: "Small Fridge", price: 200 },
-  { id: "f_md", label: "Medium Fridge", price: 300 },
-  { id: "f_lg", label: "Large Fridge", price: 400 },
+  { id: "f_md", label: "Medium Fridge", price: 250 },
+  { id: "f_lg", label: "Large Fridge", price: 300 },
 ];
 
 const CONDITIONS = [
-  { id: "paint", label: "Paint or POP residue", price: 300 },
+  { id: "paint", label: "Paint or POP residue", price: 250 },
   { id: "stains", label: "Tough stains", price: 200 },
-  { id: "popdirty", label: "POP residue + very dirty", price: 500 },
-  { id: "heavy", label: "Moving of heavy furniture and equipment", price: 400 },
+  { id: "popdirty", label: "POP residue + very dirty", price: 400 },
+  { id: "heavy", label: "Moving of heavy furniture and equipment", price: 300 },
 ];
 
 function fmt(n: number) {
@@ -119,7 +119,7 @@ function BookPage() {
       for (const s of SOFAS) t += (sofas[s.id] ?? 0) * (s.price + priceOffset);
       for (const c of CARPETS) t += (carpets[c.id] ?? 0) * (c.price + priceOffset);
       t += windows * (50 + priceOffset);
-      if (utensils) t += (300 + priceOffset);
+      if (utensils) t += (250 + priceOffset);
       for (const f of FRIDGES) t += (fridges[f.id] ?? 0) * (f.price + priceOffset);
     }
     
@@ -207,7 +207,7 @@ function BookPage() {
         tableData.push(["Windows", "-", String(windows), pdfFmt(50 + priceOffset)]);
       }
       if (utensils) {
-        tableData.push(["Utensils", "-", "-", pdfFmt(300 + priceOffset)]);
+        tableData.push(["Utensils", "-", "-", pdfFmt(250 + priceOffset)]);
       }
       for (const f of FRIDGES) {
         if (fridges[f.id]) {
@@ -453,7 +453,7 @@ function BookPage() {
                         >
                           <div>
                             <div className="text-sm font-medium">Utensils</div>
-                            <div className="text-xs text-muted-foreground">+{fmt(300 + priceOffset)}</div>
+                            <div className="text-xs text-muted-foreground">+{fmt(250 + priceOffset)}</div>
                           </div>
                           <span className={`grid h-6 w-6 place-items-center rounded-md border ${utensils ? "border-primary bg-primary text-primary-foreground" : "border-border"}`}>
                             {utensils && <Check className="h-3.5 w-3.5" />}
