@@ -263,20 +263,9 @@ function BookPage() {
     <div className="min-h-screen bg-background">
       <SiteNav />
 
-      <section className="border-b border-border bg-[color:var(--muted)]">
-        <div className="bg-primary/10 px-4 py-3 text-center text-sm font-medium text-[color:var(--primary-deep)]">
-          🎉 Special Offer: Any bill beyond GH₵1,500 gets an automatic 2% discount!
-        </div>
-        <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
-          <Reveal>
-            <p className="text-xs font-semibold uppercase tracking-widest text-[color:var(--primary-deep)]">Book a cleaning</p>
-            <h1 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">Build your booking</h1>
-            <p className="mt-2 max-w-xl text-muted-foreground">
-              Choose a service and rooms — your estimate updates live. Final price is confirmed after an on-site check.
-            </p>
-          </Reveal>
-        </div>
-      </section>
+      <div className="bg-primary/10 px-4 py-3 text-center text-sm font-medium text-[color:var(--primary-deep)] border-b border-border">
+        🎉 Special Offer: Any bill beyond GH₵1,500 gets an automatic 2% discount!
+      </div>
 
       <AnimatePresence mode="wait">
         {submitted ? (
@@ -295,13 +284,47 @@ function BookPage() {
               Thanks {contact.name.split(" ")[0]}! Your invoice has been downloaded.
             </p>
 
-            <div className="mt-8 rounded-lg border border-border bg-card p-6 shadow-[var(--shadow-card)]">
-              <h3 className="text-lg font-medium text-foreground">Next Step: Finalize & Pay</h3>
-              <p className="mt-2 text-sm text-muted-foreground">
-                To begin work, please send us the generated invoice on WhatsApp. We will provide you with the payment details. Once you make the payment and submit the receipt, your booking is confirmed!
-              </p>
+            <div className="mt-8 rounded-lg border border-border bg-card p-6 shadow-[var(--shadow-card)] text-left">
+              <h3 className="text-lg font-medium text-foreground text-center">Next Steps: Finalize & Pay</h3>
+              
+              <div className="mt-8">
+                {/* Step 1 */}
+                <div className="relative pl-12 pb-10">
+                  <div className="absolute left-0 top-0 z-10 flex h-8 w-8 items-center justify-center rounded-full border-2 border-primary bg-background text-sm font-bold text-[color:var(--primary-deep)] ring-4 ring-card">
+                    1
+                  </div>
+                  <div className="absolute bottom-1 left-[15px] top-9 w-0 border-l-2 border-dashed border-border/80"></div>
+                  <h4 className="mt-1.5 text-base font-semibold leading-none text-foreground">Save the invoice</h4>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    Your PDF invoice should download automatically. If not, click "Download Invoice Again" below.
+                  </p>
+                </div>
+                
+                {/* Step 2 */}
+                <div className="relative pl-12 pb-10">
+                  <div className="absolute left-0 top-0 z-10 flex h-8 w-8 items-center justify-center rounded-full border-2 border-border bg-background text-sm font-bold text-muted-foreground ring-4 ring-card">
+                    2
+                  </div>
+                  <div className="absolute bottom-1 left-[15px] top-9 w-0 border-l-2 border-dashed border-border/80"></div>
+                  <h4 className="mt-1.5 text-base font-semibold leading-none text-foreground">Send via WhatsApp</h4>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    Tap the WhatsApp button below, attach your PDF invoice, and send it to us.
+                  </p>
+                </div>
 
-              <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
+                {/* Step 3 */}
+                <div className="relative pl-12">
+                  <div className="absolute left-0 top-0 z-10 flex h-8 w-8 items-center justify-center rounded-full border-2 border-border bg-background text-sm font-bold text-muted-foreground ring-4 ring-card">
+                    3
+                  </div>
+                  <h4 className="mt-1.5 text-base font-semibold leading-none text-foreground">Complete payment</h4>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    We'll reply with payment details. Once you pay and share the receipt, your booking is confirmed!
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
                 <a
                   href={`https://wa.me/233530268611?text=${encodeURIComponent("Hello, I would like to confirm my booking and process payment. My invoice is attached.")}`}
                   target="_blank"
