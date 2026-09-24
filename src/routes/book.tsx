@@ -74,9 +74,9 @@ const FRIDGES = [
 ];
 
 const CONDITIONS = [
-  { id: "paint", label: "Paint or POP residue", price: 250 },
-  { id: "stains", label: "Tough stains", price: 200 },
-  { id: "popdirty", label: "POP residue + very dirty", price: 400 },
+  { id: "paint", label: "Paint or POP residue", price: 200 },
+  { id: "stains", label: "Tough stains", price: 150 },
+  { id: "popdirty", label: "POP residue + very dirty", price: 350 },
   { id: "heavy", label: "Moving of heavy furniture and equipment", price: 300 },
 ];
 
